@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="A secure and premium chat interface for the Gemma AI model.">
+    <title>Secure AI Hub - Chat UI</title>
+    <link rel="stylesheet" href="style.css">
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600&family=Outfit:wght@400;600;800&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="app-container">
+        <aside class="sidebar">
+            <div class="logo">
+                <h1>Secure AI</h1>
+            </div>
+            <nav>
+                <ul>
+                    <li><a href="#" class="active">Chat</a></li>
+                    <li><a href="#">Settings</a></li>
+                </ul>
+            </nav>
+            <div class="log-viewer" style="margin-top: 2rem;">
+                <h3 style="font-size: 1rem; margin-bottom: 1rem; color: #94a3b8;">Logs</h3>
+                <div id="log-console" style="font-family: monospace; font-size: 0.75rem; color: #94a3b8; background: rgba(0,0,0,0.2); padding: 0.5rem; border-radius: 0.5rem; height: 200px; overflow-y: auto;">
+                    <div class="log-item">> System initialized</div>
+                </div>
+            </div>
+        </aside>
+        <main class="chat-area">
+            <header>
+                <h2>Gemma 4 Chat</h2>
+                <div class="status">
+                    <span class="status-indicator connected"></span> Connected
+                    <span id="current-time" style="margin-left: 1rem;"></span>
+                </div>
+            </header>
+            <div class="message-container" id="chat-messages">
+                <!-- Messages will appear here -->
+                <div class="message bot">
+                    <div class="avatar">G</div>
+                    <div class="text">Hello! I am the Gemma 4 model. How can I help you today?</div>
+                </div>
+            </div>
+            <div class="input-area">
+                <textarea id="user-input" placeholder="Type your message here..."></textarea>
+                <button id="send-button">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" width="24" height="24"><path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z"/></svg>
+                </button>
+            </div>
+        </main>
+    </div>
+    <script src="script.js"></script>
+</body>
+</html>
