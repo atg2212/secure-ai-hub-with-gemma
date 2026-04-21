@@ -5,15 +5,35 @@ This guide provides a step-by-step walkthrough on how to deploy a large language
 ---
 
 ## Table of Contents
-1. [Model Selection & Quantization](#model-selection--quantization)
-2. [Infrastructure Setup in Specific Region](#infrastructure-setup-in-specific-region)
-3. [Securing Model Access](#securing-model-access)
-4. [Deploying User Interfaces](#deploying-user-interfaces)
-5. [Testing and Verification](#testing-and-verification)
+1. [Finding the Right Model & VM](#finding-the-right-model--vm)
+2. [Model Selection & Quantization](#model-selection--quantization)
+3. [Infrastructure Setup in Specific Region](#infrastructure-setup-in-specific-region)
+4. [Deploying and Serving the Model](#deploying-and-serving-the-model)
+5. [Securing Model Access](#securing-model-access)
+6. [Deploying User Interfaces](#deploying-user-interfaces)
+7. [Testing and Verification](#testing-and-verification)
 
 ---
 
-## 1. Model Selection & Quantization
+## 1. Finding the Right Model & VM
+
+When starting an LLM project, choosing the right model and hardware is the first critical step.
+
+### How to Find the Right Model
+- **Task Complexity**: For simple tasks (text classification, short summaries), smaller models (2B - 7B) are often sufficient. For complex tasks (reasoning, coding, multi-turn chat), larger models (30B+) are recommended.
+- **Resource Constraints**: The size of the model determines the memory needed. A general rule of thumb is that each parameter requires about 2 bytes in 16-bit precision. So a 7B model needs ~14GB, and a 31B model needs ~62GB.
+- **Quantization**: You can use quantization (reducing precision to 8-bit or 4-bit) to fit larger models on smaller GPUs.
+
+### How to Find the Right VM (GPU Sizing)
+- **VRAM is Key**: Ensure the GPU has enough Video RAM (VRAM) to hold the model *plus* working memory for context.
+- **Common GPUs in GCP**:
+    - **NVIDIA L4**: 24GB VRAM (Good for models up to 13B or quantized 30B).
+    - **NVIDIA A100 (40GB)**: 40GB VRAM (Good for quantized 30B-70B models).
+    - **NVIDIA A100 (80GB)**: 80GB VRAM (Best for large models or high throughput).
+
+---
+
+## 2. Model Selection & Quantization
 
 To fit a **31 Billion parameter** model like Gemma on a **40 GB GPU** (e.g., NVIDIA A100 40GB), you must use **quantization**. 
 
@@ -42,7 +62,26 @@ When deploying in a region with specific constraints (like `me-west1`), follow t
 
 ---
 
-## 3. Securing Model Access
+## 4. Deploying and Serving the Model
+
+Once the infrastructure is ready, you need to install the model server and load the model. We use **Ollama** for this project.
+
+### Step 4.1: Install Ollama
+Connect to the VM via SSH and run the installation script:
+```bash
+curl -fsSL https://ollama.com/install.sh | sh
+```
+
+### Step 4.2: Pull and Run the Model
+Pull the specific quantized model we selected:
+```bash
+ollama run gemma4:31b-it-q8_0
+```
+*Note: The first run will download the model, which might take time depending on connection speed.*
+
+---
+
+## 5. Securing Model Access
 
 To restrict calls to the model to resources running strictly in the `me-west1` region:
 
@@ -63,7 +102,7 @@ gcloud compute firewall-rules create allow-ollama-me-west1 \
 
 ---
 
-## 4. Deploying User Interfaces
+## 6. Deploying User Interfaces
 
 You can deploy both ready-made and custom UIs on the same VM.
 
@@ -93,7 +132,7 @@ cd ~/secure_ai_hub && python3 -m http.server 8083
 
 ---
 
-## 5. Testing and Verification
+## 7. Testing and Verification
 
 Since the VM has no external IP, you must use **IAP (Identity-Aware Proxy) Tunneling** to access the UIs and API from your local computer.
 
